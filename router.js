@@ -38,7 +38,8 @@ router.get('/api/similar', async (req, res) => {
             method: 'artist.getSimilar',
             api_key: config.API_KEY,
             format: 'json',
-            artist: req.query.artist
+            artist: req.query.artist,
+            limit: req.query.limit 
         }
     })
     res.json(response.data)
