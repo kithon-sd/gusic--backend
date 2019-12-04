@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     res.json(response.data)
 })
 
-router.get('/placeholder', async (req, res) => {
+router.get('/api/albumInfo', async (req, res) => {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'album.getInfo',
@@ -27,6 +27,18 @@ router.get('/placeholder', async (req, res) => {
             format: 'json',
             artist: req.query.artist,
             album: req.query.album
+        }
+    })
+    res.json(response.data)
+})
+
+router.get('/api/similar', async (req, res) => {
+    const response = await axios.get(`${url}`, {
+        params: {
+            method: 'artist.getSimilar',
+            api_key: config.API_KEY,
+            format: 'json',
+            artist: req.query.artist
         }
     })
     res.json(response.data)
