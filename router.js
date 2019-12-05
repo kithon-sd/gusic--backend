@@ -45,4 +45,16 @@ router.get('/api/similar', async (req, res) => {
     res.json(response.data)
 })
 
+router.get('/api/artistInfo', async (req, res) => {
+    const response = await axios.get(`${url}`, {
+        params: {
+            method: 'artist.getInfo',
+            api_key: config.API_KEY,
+            format: 'json',
+            artist: req.query.artist
+        }
+    })
+    res.json(response.data)
+})
+
 module.exports = router
