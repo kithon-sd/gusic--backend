@@ -81,13 +81,14 @@ router.get('/api/user/fetchApiKey', async (req, res) => { //make this more secur
 router.get('/api/user/getSessionKey', async (req , res) => {
     console.log(req.query.token)
     const apiSignature = md5(
-        `api_key${config.API_KEY}
-        methodauth.getSession
-        token${req.query.token}
-        ${config.SECRET}`
-        )
+        `api_key${config.API_KEY}` +
+        `methodauth.getSession` +
+        `token${req.query.token}` +
+        `${config.SECRET}`)
+        
         console.log(apiSignature)
 
+    try {    
      const response = await axios.get(`${url}`, {
          params: {
              method: 'auth.getSession',
@@ -97,33 +98,48 @@ router.get('/api/user/getSessionKey', async (req , res) => {
              format: 'json',
          }
      })
-
+     console.log(response.data)
      res.json(response.data)
+    }
+    catch(err) {
+        console.error(err.response.data.message)
+    }
 })
 
-router.get('/api/track/addFavorite', async (req, res) => {
+
+router.post('/api/track/addFavorite', async (req, res) => {
+    console.log(`${req.body.artist} ${req.body.track} ${req.body.sessionKey}`)
+    try {
     const apiSignature = md5(
-        `api_key${config.API_KEY} 
-        artist${req.query.artist}
-        formatjson
-        methodtrack.love
-        track${req.query.track}
-        ${config.SECRET}`
+        `api_key${config.API_KEY}` +
+        `artist${req.body.artist}` +
+        `methodtrack.love` +
+        `sk${req.body.sessionKey}` +
+        `track${req.body.track}` +
+        `${config.SECRET}` 
 
     )
 
-    const response = await axios.get(url, {
+    const response = await axios({
+        method: 'post',
+        url: url,
         params: {
             method: 'track.love',
             api_key: config.API_KEY,
             api_sig: apiSignature,
             format: 'json',
-            artist: req.query.artist,
-            track: req.query.track,
+            artist: req.body.artist,
+            track: req.body.track,
+            sk: req.body.sessionKey
         }
     })
 
+    console.log(response)
     res.json(response.data)
+    }
+    catch(err) {
+        console.error(err.response.data)        
+    }
 })
 
 module.exports = router
