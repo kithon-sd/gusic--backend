@@ -6,7 +6,7 @@ const config = require('./config')
 const url = 'http://ws.audioscrobbler.com/2.0/'
 
 
-router.get('/', async (req, res) => {
+router.get('/api/album/search', async (req, res) => {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'album.search',
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
     res.json(response.data)
 })
 
-router.get('/api/album/info', async (req, res) => {
+router.get('/api/album/getInfo', async (req, res) => {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'album.getInfo',
@@ -33,7 +33,7 @@ router.get('/api/album/info', async (req, res) => {
     res.json(response.data)
 })
 
-router.get('/api/album/similarArtists', async (req, res) => {
+router.get('/api/artist/getSimilar', async (req, res) => {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'artist.getSimilar',
@@ -46,7 +46,7 @@ router.get('/api/album/similarArtists', async (req, res) => {
     res.json(response.data)
 })
 
-router.get('/api/artist/info', async (req, res) => {
+router.get('/api/artist/getInfo', async (req, res) => {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'artist.getInfo',
@@ -58,7 +58,7 @@ router.get('/api/artist/info', async (req, res) => {
     res.json(response.data)
 })
 
-router.get('/api/artist/topAlbums', async (req, res) => {
+router.get('/api/artist/getTopAlbums', async (req, res) => {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'artist.getTopAlbums',
@@ -78,15 +78,12 @@ router.get('/api/user/fetchApiKey', async (req, res) => { //make this more secur
     })
 })
 
-router.get('/api/user/getSessionKey', async (req , res) => {
-    console.log(req.query.token)
+router.get('/api/auth/getSession', async (req , res) => {
     const apiSignature = md5(
         `api_key${config.API_KEY}` +
         `methodauth.getSession` +
         `token${req.query.token}` +
         `${config.SECRET}`)
-        
-        console.log(apiSignature)
 
     try {    
      const response = await axios.get(`${url}`, {
@@ -98,7 +95,6 @@ router.get('/api/user/getSessionKey', async (req , res) => {
              format: 'json',
          }
      })
-     console.log(response.data)
      res.json(response.data)
     }
     catch(err) {
@@ -107,8 +103,7 @@ router.get('/api/user/getSessionKey', async (req , res) => {
 })
 
 
-router.post('/api/track/addFavorite', async (req, res) => {
-    console.log(`${req.body.artist} ${req.body.track} ${req.body.sessionKey}`)
+router.post('/api/track/love', async (req, res) => {
     try {
     const apiSignature = md5(
         `api_key${config.API_KEY}` +
@@ -133,12 +128,27 @@ router.post('/api/track/addFavorite', async (req, res) => {
             sk: req.body.sessionKey
         }
     })
-
-    console.log(response)
-    res.json(response.data)
+    res.json(response.statusCode)
     }
     catch(err) {
         console.error(err.response.data)        
+    }
+})
+
+router.get('/api/user/getLovedTracks', async (req, res) => {
+    try {
+        const response = await axios.get(url, {
+            params: {
+                method: 'user.getLovedTracks',
+                api_key: config.API_KEY,
+                user: req.query.user,
+                format: 'json'
+            }
+        })
+        res.json(response.data)
+    }
+    catch(err) {
+        console.error(err.data)
     }
 })
 
