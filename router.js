@@ -107,10 +107,10 @@ router.post('/api/track/love', async (req, res) => {
     try {
     const apiSignature = md5(
         `api_key${config.API_KEY}` +
-        `artist${req.body.artist}` +
+        `artist${req.body.data.artist}` +
         `methodtrack.love` +
-        `sk${req.body.sessionKey}` +
-        `track${req.body.track}` +
+        `sk${req.body.data.sessionKey}` +
+        `track${req.body.data.track}` +
         `${config.SECRET}` 
 
     )
@@ -123,9 +123,9 @@ router.post('/api/track/love', async (req, res) => {
             api_key: config.API_KEY,
             api_sig: apiSignature,
             format: 'json',
-            artist: req.body.artist,
-            track: req.body.track,
-            sk: req.body.sessionKey
+            artist: req.body.data.artist,
+            track: req.body.data.track,
+            sk: req.body.data.sessionKey
         }
     })
     res.json(response.statusCode)
