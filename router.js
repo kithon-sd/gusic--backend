@@ -103,37 +103,6 @@ router.get('/api/auth/getSession', async (req , res) => {
 })
 
 
-router.post('/api/track/love', async (req, res) => {
-    try {
-    const apiSignature = md5(
-        `api_key${config.API_KEY}` +
-        `artist${req.body.data.artist}` +
-        `methodtrack.love` +
-        `sk${req.body.data.sessionKey}` +
-        `track${req.body.data.track}` +
-        `${config.SECRET}` 
-
-    )
-
-    const response = await axios({
-        method: 'post',
-        url: url,
-        params: {
-            method: 'track.love',
-            api_key: config.API_KEY,
-            api_sig: apiSignature,
-            format: 'json',
-            artist: req.body.data.artist,
-            track: req.body.data.track,
-            sk: req.body.data.sessionKey
-        }
-    })
-    res.json(response.statusCode)
-    }
-    catch(err) {
-        console.error(err.response.data)        
-    }
-})
 
 router.get('/api/user/getLovedTracks', async (req, res) => {
     try {
@@ -148,7 +117,69 @@ router.get('/api/user/getLovedTracks', async (req, res) => {
         res.json(response.data)
     }
     catch(err) {
-        console.error(err.data)
+        console.error(err)
+    }
+})
+
+router.post('/api/track/love', async (req, res) => {//formerly unlove
+    console.log(req.body)
+    try {
+        const apiSignature = md5(
+            `api_key${config.API_KEY}` +
+            `artist${req.body.data.artist.name}` +
+            `methodtrack.love` +
+            `sk${req.body.data.sessionKey}` +
+            `track${req.body.data.track}` +
+            `${config.SECRET}`
+        )
+        const response = await axios({
+            method: 'post',
+            url: url,
+            params: {
+                method: 'track.love',
+                api_key: config.API_KEY,
+                api_sig: apiSignature,
+                format: 'json',
+                artist: req.body.data.artist.name,
+                track: req.body.data.track,
+                sk: req.body.data.sessionKey 
+            }
+        })
+        res.json(response.statusCode)
+    }
+    catch(err) {
+        console.error(err.response.data)
+    }
+})
+
+router.post('/api/track/unlove', async (req, res) => {//formerly unlove
+    console.log(req.body)
+    try {
+        const apiSignature = md5(
+            `api_key${config.API_KEY}` +
+            `artist${req.body.data.artist.name}` +
+            `methodtrack.unlove` +
+            `sk${req.body.data.sessionKey}` +
+            `track${req.body.data.track}` +
+            `${config.SECRET}`
+        )
+        const response = await axios({
+            method: 'post',
+            url: url,
+            params: {
+                method: 'track.unlove',
+                api_key: config.API_KEY,
+                api_sig: apiSignature,
+                format: 'json',
+                artist: req.body.data.artist.name,
+                track: req.body.data.track,
+                sk: req.body.data.sessionKey 
+            }
+        })
+        res.json(response.statusCode)
+    }
+    catch(err) {
+        console.error(err.response.data)
     }
 })
 
