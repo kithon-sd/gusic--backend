@@ -5,22 +5,27 @@ const config = require('./config')
 
 const url = 'http://ws.audioscrobbler.com/2.0/'
 
-
 router.get('/api/album/search', async (req, res) => {
-    const response = await axios.get(`${url}`, {
-        params: {
-            method: 'album.search',
-            album: req.query.query,
-            api_key: config.API_KEY,
-            page: req.query.page,
-            limit: req.query.limit,
-            format: 'json'
-        }
-    })
-    res.json(response.data)
+    try {
+        const response = await axios.get(url, {
+            params: {
+                method: 'album.search',
+                album: req.query.query,
+                api_key: config.API_KEY,
+                page: req.query.page,
+                limit: req.query.limit,
+                format: 'json'
+            }
+        })
+        res.json(response.data)
+    }
+    catch(err) {
+        console.error(err)
+    }
 })
 
 router.get('/api/album/getInfo', async (req, res) => {
+    try {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'album.getInfo',
@@ -31,9 +36,14 @@ router.get('/api/album/getInfo', async (req, res) => {
         }
     })
     res.json(response.data)
+    }
+    catch(err) {
+        console.error(err)
+    }
 })
 
 router.get('/api/artist/getSimilar', async (req, res) => {
+    try {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'artist.getSimilar',
@@ -44,9 +54,14 @@ router.get('/api/artist/getSimilar', async (req, res) => {
         }
     })
     res.json(response.data)
+    }
+    catch(err) {
+        console.error(err)
+    }
 })
 
 router.get('/api/artist/getInfo', async (req, res) => {
+    try {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'artist.getInfo',
@@ -56,9 +71,14 @@ router.get('/api/artist/getInfo', async (req, res) => {
         }
     })
     res.json(response.data)
+    }
+    catch(err) {
+        console.error(err)
+    }
 })
 
 router.get('/api/artist/getTopAlbums', async (req, res) => {
+    try {
     const response = await axios.get(`${url}`, {
         params: {
             method: 'artist.getTopAlbums',
@@ -70,12 +90,21 @@ router.get('/api/artist/getTopAlbums', async (req, res) => {
         }
     })
     res.json(response.data)
+    }
+    catch(err) {
+        console.error(err)
+    }
 })
 
 router.get('/api/user/fetchApiKey', async (req, res) => { //make this more secure somehow
+    try {
     res.json({
         key: config.API_KEY
     })
+    }
+    catch(err) {
+        console.error(err)
+    }
 })
 
 router.get('/api/auth/getSession', async (req , res) => {
@@ -121,12 +150,12 @@ router.get('/api/user/getLovedTracks', async (req, res) => {
     }
 })
 
-router.post('/api/track/love', async (req, res) => {//formerly unlove
+router.post('/api/track/love', async (req, res) => {
     console.log(req.body)
     try {
         const apiSignature = md5(
             `api_key${config.API_KEY}` +
-            `artist${req.body.data.artist.name}` +
+            `artist${req.body.data.artist}` +
             `methodtrack.love` +
             `sk${req.body.data.sessionKey}` +
             `track${req.body.data.track}` +
@@ -140,7 +169,7 @@ router.post('/api/track/love', async (req, res) => {//formerly unlove
                 api_key: config.API_KEY,
                 api_sig: apiSignature,
                 format: 'json',
-                artist: req.body.data.artist.name,
+                artist: req.body.data.artist,
                 track: req.body.data.track,
                 sk: req.body.data.sessionKey 
             }
@@ -152,12 +181,12 @@ router.post('/api/track/love', async (req, res) => {//formerly unlove
     }
 })
 
-router.post('/api/track/unlove', async (req, res) => {//formerly unlove
+router.post('/api/track/unlove', async (req, res) => {
     console.log(req.body)
     try {
         const apiSignature = md5(
             `api_key${config.API_KEY}` +
-            `artist${req.body.data.artist.name}` +
+            `artist${req.body.data.artist}` +
             `methodtrack.unlove` +
             `sk${req.body.data.sessionKey}` +
             `track${req.body.data.track}` +
@@ -171,7 +200,7 @@ router.post('/api/track/unlove', async (req, res) => {//formerly unlove
                 api_key: config.API_KEY,
                 api_sig: apiSignature,
                 format: 'json',
-                artist: req.body.data.artist.name,
+                artist: req.body.data.artist,
                 track: req.body.data.track,
                 sk: req.body.data.sessionKey 
             }
