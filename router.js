@@ -2,8 +2,13 @@ const axios = require('axios')
 const md5 = require('md5')
 const router = require('express').Router()
 const config = require('./config')
+const path = require('path')
 
 const url = 'http://ws.audioscrobbler.com/2.0/'
+
+router.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname+'/build/index.html'))
+})
 
 router.get('/api/album/search', async (req, res) => {
     try {
